@@ -18,6 +18,13 @@ namespace BulkOperations_EFCore.Controllers
             _employeeService = employeeService;
         }
 
+        //
+        [HttpPost(nameof(AddDataBulkNewCopyAsync))]
+        public async Task<IActionResult> AddDataBulkNewCopyAsync()
+        {
+            var response = await _employeeService.AddDataBulkNewCopyAsync();
+            return Ok(response);
+        }
 
         [HttpPost(nameof(AddDataBulkCopyAsync))]
         public async Task<IActionResult> AddDataBulkCopyAsync()

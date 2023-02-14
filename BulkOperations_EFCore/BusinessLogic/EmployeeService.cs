@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Reflection;
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BulkOperations_EFCore.BusinessLogic
 {
@@ -102,6 +103,87 @@ namespace BulkOperations_EFCore.BusinessLogic
 
             TimeSpan = DateTime.Now - Start;
             return TimeSpan;
+        }
+
+        public async Task<TimeSpan> AddDataBulkNewCopyAsync()
+        {
+            List<Employee> employees = new(); // C# 9 Syntax.
+            Start = DateTime.Now;
+            var times = new List<long>();
+
+            var stop = new Stopwatch();
+            stop.Start();
+            for (int i = 0; i < 1000; i++)
+            {
+                var employee = new Employee()
+                {
+                    Name = "Employee_" + i,
+                    Designation = "Designation_" + i,
+                    City = "City_" + i,
+                    Campo1 = "City_" + i,
+                    Campo2 = "City_" + i,
+                    Campo3 = "City_" + i,
+                    Campo4 = "City_" + i,
+                    Campo5 = "City_" + i,
+                    Campo6 = "City_" + i,
+                    Campo7 = "City_" + i,
+                    Campo8 = "City_" + i,
+                    Campo9 = "City_" + i,
+                    Campo10 = "City_" + i,
+                    Campo11 = "City_" + i,
+                    Campo12 = "City_" + i,
+                    Campo13 = "City_" + i,
+                    Campo14 = "City_" + i,
+                    Campo15 = "City_" + i,
+                    Campo16 = "City_" + i,
+                    Campo17 = "City_" + i,
+                    Campo18 = "City_" + i,
+                    Campo20 = "City_" + i,
+                    Campo21 = "City_" + i,
+                    Campo22 = "City_" + i,
+                    Campo23 = "City_" + i,
+                    Campo24 = "City_" + i,
+                    Campo25 = "City_" + i,
+                    Campo26 = "City_" + i,
+                    Campo27 = "City_" + i,
+                    Campo28 = "City_" + i,
+                    Campo29 = "City_" + i,
+                    Campo30 = "City_" + i,
+                    Campo31 = "City_" + i,
+                    Campo32 = "City_" + i,
+                    Campo33 = "City_" + i,
+                    Campo34 = "City_" + i
+                };
+            }
+            stop.Stop();
+            var time = stop.ElapsedMilliseconds;
+            times.Add(time);
+            stop.Restart();
+            await AddRangeCopyAsync(employees);
+            stop.Stop();
+            time = stop.ElapsedMilliseconds;
+            times.Add(time);
+      
+
+            TimeSpan = DateTime.Now - Start;
+            return TimeSpan;
+        }
+
+        public async Task AddRangeCopyAsync<T>(List<T> list) 
+        {
+            Type temp = typeof(T);
+            var dataTable = ListToDataTable(list, temp.Name);
+            using (SqlBulkCopy sqlbc = new SqlBulkCopy(_appDbContext.Database.GetConnectionString()))
+            {
+                sqlbc.DestinationTableName = temp.Name;
+
+                foreach (PropertyInfo info in typeof(T).GetProperties())
+                {
+                    sqlbc.ColumnMappings.Add(info.Name, info.Name);
+                }
+
+                await sqlbc.WriteToServerAsync(dataTable);
+            }
         }
 
         public static DataTable ListToDataTable<T>(List<T> list, string _tableName)
